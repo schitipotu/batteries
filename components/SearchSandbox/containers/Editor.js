@@ -104,8 +104,9 @@ export default class Editor extends Component {
 
 	renderFormItem = (item, name) => {
 		let FormInput = null;
-		// always set to default value
-		const value = item.default;
+
+		const { listComponentProps } = this.state;
+		const value = listComponentProps[name] || item.default;
 
 		switch (item.input) {
 			case 'bool': {
@@ -252,12 +253,16 @@ export default class Editor extends Component {
 						<Card>
 							<SelectedFilters
 								render={(props) => {
-									const { selectedValues, setValue, clearValues } = props;
+									const { selectedValues, setValue, clearValues, components } = props;
 									const clearFilter = (component) => {
 										setValue(component, null);
 									};
 
 									const filters = Object.keys(selectedValues).map((component) => {
+										if(!components.includes(component)) {
+											return null;
+										}
+
 										if (
 											!selectedValues[component].value
 											|| selectedValues[component].value.length === 0
